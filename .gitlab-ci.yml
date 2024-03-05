@@ -1,7 +1,7 @@
 stages:
   - build
   # - test
-  - release
+  - deploy
 
 .build-tags:
   tags:
@@ -25,18 +25,33 @@ stages:
   rules:
     - if: $CI_COMMIT_BRANCH == 'dev'
 
-.release-rules:
+.prod-rules:
   rules:
     - if: $CI_COMMIT_TAG
 
-.release-script:
+.build-dev-script:
+  script:
+    - docker buildx build -t $CI_REGISTRY_IMAGE:dev --platform=linux/amd64,linux/arm64 .
+
+.deploy-dev-script:
+  script:
+    - docker run \
+      -p $HOST_PORT:22 \
+      -d \
+      --restart=unless-stopped \
+      --name borg \
+      --device /dev/fuse \
+      --cap-add SYS_ADMIN \
+      -e S3_KEY=$S3_DEV_KEY \
+      -e S3_SECRET=$S3_DEV_SECRET \
+      -e S3_URL=$S3_DEV_URL \
+      -e BUCKET_NAME=$S3_DEV_BUCKET \
+      -e SSH_KEY=$SSH_KEY \
+      borg
+
+.deploy-script:
   script:
     - docker buildx build -t $CI_REGISTRY_IMAGE:$CI_COMMIT_TAG -t $CI_REGISTRY_IMAGE:latest --platform=linux/amd64,linux/arm64 --push .
-# services:
-#   - docker:dind
-.dev-script:
-  script:
-    - docker buildx build -t $CI_REGISTRY_IMAGE:latest --platform=linux/amd64,linux/arm64 .
 
 build-dev:
   stage: build
@@ -45,16 +60,18 @@ build-dev:
     - docker:dind
   extends:
     - .build-tags
-    - .release-rules
+    - .dev-rules
+    - .build-dev-script
 
-release-dev:
-  stage: release
+deploy-dev:
+  stage: deploy
   image: docker:20.10
   services:
     - docker:dind
   extends:
-    - .release-tags
-    - .release-rules
+    - .deploy-tags
+    - .dev-rules
+    - .deploy-dev-script
 
 build:
   stage: build
@@ -63,13 +80,13 @@ build:
     - docker:dind
   extends:
     - .build-tags
-    - .release-rules
+    - .prod-rules
 
-release:
-  stage: release
+deploy:
+  stage: deploy
   image: docker:20.10
   services:
     - docker:dind
   extends:
-    - .release-tags
-    - .release-rules
+    - .deploy-tags
+    - .prod-rules

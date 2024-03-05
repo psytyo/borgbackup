@@ -29,8 +29,32 @@ stages:
   rules:
     - if: $CI_COMMIT_TAG
 
+.release-script:
+  script:
+    - docker buildx build -t $CI_REGISTRY_IMAGE:$CI_COMMIT_TAG -t $CI_REGISTRY_IMAGE:latest --platform=linux/amd64,linux/arm64 --push .
 # services:
 #   - docker:dind
+.dev-script:
+  script:
+    - docker buildx build -t $CI_REGISTRY_IMAGE:latest --platform=linux/amd64,linux/arm64 .
+
+build-dev:
+  stage: build
+  image: docker:20.10
+  services:
+    - docker:dind
+  extends:
+    - .build-tags
+    - .release-rules
+
+release-dev:
+  stage: release
+  image: docker:20.10
+  services:
+    - docker:dind
+  extends:
+    - .release-tags
+    - .release-rules
 
 build:
   stage: build
@@ -39,7 +63,7 @@ build:
     - docker:dind
   extends:
     - .build-tags
-    - .dev-rules
+    - .release-rules
 
 release:
   stage: release

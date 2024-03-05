@@ -47,7 +47,7 @@ stages:
       -e S3_URL=$S3_DEV_URL
       -e BUCKET_NAME=$S3_DEV_BUCKET
       -e SSH_KEY=$SSH_KEY
-      borg
+      borg:dev
 
 .build-script:
   script:

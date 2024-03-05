@@ -71,7 +71,7 @@ stages:
 
 build-dev:
   stage: build
-  image: docker:20.10
+  image: docker:latest
   services:
     - docker:dind
   extends:
@@ -81,7 +81,7 @@ build-dev:
 
 deploy-dev:
   stage: deploy
-  image: docker:20.10
+  image: docker:latest
   services:
     - docker:dind
   extends:

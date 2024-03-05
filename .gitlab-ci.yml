@@ -31,7 +31,7 @@ stages:
 
 .build-dev-script:
   script:
-    - docker buildx build -t $CI_REGISTRY_IMAGE:dev --platform=linux/amd64,linux/arm64 .
+    - docker buildx build -t borg:dev --platform=linux/amd64,linux/arm64 .
 
 .deploy-dev-script:
   script:

@@ -1,7 +1,7 @@
 #!/bin/bash
 
-export BORG_REPO=/mnt/wasabi/borg
-export WASABI_API_FILE=/root/wasabi
+export BORG_REPO=/mnt/s3/borg
+export S3_API_FILE=/root/s3
 
 # Clean up old ssh host keys and create new ones
 # rm -f /etc/ssh/ssh_host*
@@ -14,8 +14,8 @@ for keytype in ed25519 rsa ; do
 	fi
 done
 
-echo $WASABI_KEY:$WASABI_SECRET > $WASABI_API_FILE
-s3fs $BUCKET_NAME /mnt/wasabi -o passwd_file=$WASABI_API_FILE -o url=$WASABI_URL
+echo $S3_KEY:$S3_SECRET > $S3_API_FILE
+s3fs $BUCKET_NAME /mnt/s3 -o passwd_file=$S3_API_FILE -o url=$S3_URL
 [ -d "$BORG_REPO" ] || mkdir -p $BORG_REPO
 borg init --encryption=repokey $BORG_REPO
 echo 'command="borg serve --restrict-to-path '$BORG_REPO'",restrict '$SSH_KEY'' >> /root/.ssh/authorized_keys

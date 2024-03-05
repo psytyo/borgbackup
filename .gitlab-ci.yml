@@ -45,9 +45,9 @@ stages:
       --cap-add SYS_ADMIN
       -e S3_KEY=$S3_DEV_KEY
       -e S3_SECRET=$S3_DEV_SECRET
-      -e S3_URL=$S3_DEV_URL
-      -e BUCKET_NAME=$S3_DEV_BUCKET
-      -e SSH_KEY=$SSH_KEY
+      -e "S3_URL=$S3_DEV_URL"
+      -e "BUCKET_NAME=$S3_DEV_BUCKET"
+      -e "SSH_KEY=$SSH_KEY"
       borg:dev
 
 .build-script:
@@ -57,18 +57,18 @@ stages:
 .deploy-script:
   script:
     - docker stop borg && docker rm borg
-    - docker run \
-      -p $HOST_PORT:22 \
-      -d \
-      --restart=unless-stopped \
-      --name borg \
-      --device /dev/fuse \
-      --cap-add SYS_ADMIN \
-      -e S3_KEY=$S3_KEY \
-      -e S3_SECRET=$S3_SECRET \
-      -e S3_URL=$S3_URL \
-      -e BUCKET_NAME=$S3_BUCKET \
-      -e SSH_KEY=$SSH_KEY \
+    - docker run
+      -p $HOST_PORT:22
+      -d
+      --restart=unless-stopped
+      --name borg
+      --device /dev/fuse
+      --cap-add SYS_ADMIN
+      -e S3_KEY=$S3_KEY
+      -e S3_SECRET=$S3_SECRET
+      -e "S3_URL=$S3_URL"
+      -e "BUCKET_NAME=$S3_BUCKET"
+      -e "SSH_KEY=$SSH_KEY"
       borg
 
 build-dev:

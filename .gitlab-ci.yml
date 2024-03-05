@@ -19,7 +19,7 @@ stages:
   tags:
     - bcs
     - dockfather
-    - shell
+    - docker
 
 .dev-rules:
   rules:
@@ -83,7 +83,7 @@ build-dev:
 
 deploy-dev:
   stage: deploy
-  # image: docker:25
+  image: docker:25
   services:
     - docker:dind
   extends:

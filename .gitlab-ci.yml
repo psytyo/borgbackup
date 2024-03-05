@@ -19,7 +19,7 @@ stages:
   tags:
     - bcs
     - dockfather
-    - docker
+    - shell
 
 .dev-rules:
   rules:

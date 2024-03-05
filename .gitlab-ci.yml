@@ -55,6 +55,7 @@ stages:
 
 .deploy-script:
   script:
+    - docker stop borg && docker rm borg
     - docker run \
       -p $HOST_PORT:22 \
       -d \

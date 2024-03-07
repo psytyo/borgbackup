@@ -5,6 +5,7 @@ ENV S3_SECRET=""
 ENV S3_URL=""
 ENV BUCKET_NAME=""
 ENV SSH_KEY=""
+ENV BORG_PASSPHRASE=""
 
 RUN apk add --no-cache s3fs-fuse borgbackup openssh
 RUN mkdir /mnt/s3
